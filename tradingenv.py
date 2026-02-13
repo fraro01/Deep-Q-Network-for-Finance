@@ -66,16 +66,8 @@ class TradingEnv(gym.Env): #inheritance from the Gym parent class
         self.shares = None #number of shares currently held
         self.current_step = None  #current index of the environment (which price we are looking at)
 
-    #for showing data
-    def show_data(self):
-        plt.figure(figsize=(10, 5))
-        plt.plot(self.plot_data.index, self.plot_data['Close'])
-        plt.title(f'{self.ticker } Closing Price')
-        plt.xlabel('Time')
-        plt.ylabel('Closing Price [$]')
-        plt.grid(True)
-        plt.show()
 
+        
     #initializes the environment for a new episode, resetting all the variables to their initial state
     def reset(self, seed=None, options=None):
         super().reset(seed=seed) #we call the reset of the base class gym.env, by doing so we can even insert the chosen seed.
@@ -163,6 +155,56 @@ class TradingEnv(gym.Env): #inheritance from the Gym parent class
 
         info = {}  # additional info, not used here now
         return obs, reward, terminated, truncated, info
+
+    #for showing data
+    def show_data(self):
+        plt.figure(figsize=(10, 5))
+        plt.plot(self.plot_data.index, self.plot_data['Close'])
+        plt.title(f'{self.ticker } Closing Price')
+        plt.xlabel('Time')
+        plt.ylabel('Closing Price [$]')
+        plt.grid(True)
+        plt.show()
+        
+    #for showing the actions taken in relation with the data
+    def show_data_with_actions(self, deeds):
+        #dimensions
+        plt.figure(figsize=(10, 5))
+        #Plot of the closing prices
+        plt.plot(self.plot_data.index, self.plot_data['Close'])
+        #allign deeds to the first len(deeds) timestamps
+        deeds = np.array(deeds) #conversion in Numpy, in order to usee boolean masks
+        aligned_index = self.plot_data.index[:len(deeds)] #take only the first len(deeds) elements
+        aligned_price = self.plot_data['Close'].values[:len(deeds)] #same as above
+        #Masks
+        #boleean arrays
+        mask_red = (deeds == 0)
+        mask_green = (deeds == 2)
+        #Scatter red (deeds == 0)
+        plt.scatter(
+            aligned_index[mask_red], #take only v==0 dates
+            aligned_price[mask_red], #take related prices
+            color='red',
+            label='Buy',
+            s=20, #dimensions of the markers
+            zorder=0 #sovraposition order
+        )
+        #Scatter green (deeds == 2)
+        plt.scatter(
+            aligned_index[mask_green], #same as before
+            aligned_price[mask_green],
+            color='green',
+            label='Sell',
+            s=20, 
+            zorder=0
+        )
+        #rendering
+        plt.title(f'{self.ticker } Closing Price with Actions')
+        plt.xlabel('Time')
+        plt.ylabel('Closing Price [$]')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
     #related to the "metadata" dictionary defined at the top
     def render(self, mode='human'): #visualize the current state value while we are interacting with the environment
