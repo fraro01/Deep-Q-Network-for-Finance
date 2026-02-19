@@ -7,7 +7,7 @@ The core idea is to model a simplified trading task as a **Gymnasium-compatible 
 <p align="center">
   <img src="trading_bot.JPG" width="50%" alt="trading bot">
   <br>
-  <em>Ideal representation of a trading bot</em>
+  <em> Ideal representation of a trading bot </em>
 </p>
 
 ---
@@ -86,7 +86,7 @@ Inside the notebook you can configure:
 * date range
 * data granularity (daily)
 * sliding window length
-* DQN hyperparameters (gamma, learning rate, batch size, epsilon schedule,
+* DQN hyperparameters (gamma, learning rate, batch size, epsilon schedule, ecc...)
 
 ---
 
