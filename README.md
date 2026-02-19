@@ -2,7 +2,7 @@
 
 This repository contains my **Applied Reinforcement Learning** exam project: a **Deep Q-Network (DQN)** agent trained to perform **short-term trading** on historical market data.
 
-The core idea is to model a simplified trading task as a **Gymnasium-compatible environment**, then train a **value-based RL agent** (DQN) to learn a policy over three discrete actions: **Buy / Hold / Sell**.
+The core idea is the creation of a **Gymnasium-inherited environment**, then train a **value-based RL agent** (DQN) to learn a policy over three discrete actions: **Buy, Hold, Sell**.
 
 <p align="center">
   <img src="trading_bot.JPG" width="50%" alt="trading bot">
@@ -15,13 +15,13 @@ The core idea is to model a simplified trading task as a **Gymnasium-compatible 
 ## Project Overview
 
 ### What this project does
-- Builds a custom **Gymnasium environment** (`TradingEnv`) using daily prices downloaded via `yfinance`.
+- Builds a custom **Gymnasium environment** (`TradingEnv`) using prices downloaded via `yfinance`.
 - Represents the environment **state** as a **sliding window of percentage price changes**.
 - Trains a **DQN agent** in PyTorch using:
-  - replay memory
+  - replay memory buffer
   - target network updates
   - epsilon-greedy exploration
-- Produces a simple **rendering dashboard** with Matplotlib showing price history and the agent’s actions.
+- Produces a simple rendering plot with Matplotlib showing price history and the agent’s actions.
 
 ### Action space
 - `0`: Buy (1 share if affordable)
@@ -49,14 +49,13 @@ This aligns the RL objective with the trading objective: **maximize final portfo
   Python dependencies.
 
 - `trading_bot.JPG`, `plot.JPG`  
-  Images used in the README.
+  Images used in the notebook and the README.
 
 ---
 
-## Requirements
-
-- Python (version specified in `requirements.txt`)
-- Dependencies listed in `requirements.txt`
+## Important requirement for GPU acceleration
+Since I have run the Notebook on my laptop with a Nvidia GPU, I have installed the torch version: `torch==2.5.1+cu121`, as written in the requirements.\
+ Note that if you have a MPS instead, you should pip install your version accordingly.
 
 ---
 
@@ -86,11 +85,12 @@ Inside the notebook you can configure:
 * date range
 * data granularity (daily)
 * sliding window length
+* initial wallet (cash and shares)
 * DQN hyperparameters (gamma, learning rate, batch size, epsilon schedule, ecc...)
 
 ---
 
-Dashboard Preview
+Behaviour Preview
 <p align="center"> <img src="plot.JPG" width="66%" alt="Rendering of the taken actions"> <br> <em>Example of price series with the agent’s Buy/Sell actions</em> </p>
 
 ---

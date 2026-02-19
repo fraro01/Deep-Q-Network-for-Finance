@@ -1,5 +1,6 @@
 import gymnasium as gym #for inheritance for the environment
 from gymnasium import spaces #for defining the action and observation spaces sticking to the Gym API
+from matplotlib.pylab import beta
 import numpy as np #for array manipulations and numerical calculations
 import yfinance as yf #for downloading historical stock data
 import matplotlib.pyplot as plt #for visualizing the data
@@ -65,22 +66,49 @@ class TradingEnv(gym.Env): #inheritance from the Gym parent class
         self.cash = None #available cash to buy stocks, varies every time we buy or sell a stock
         self.shares = None #number of shares currently held
         self.current_step = None  #current index of the environment (which price we are looking at)
-
-
         
+        #we can use this variable to check if the environment has been reset at least once, 
+        #for rendering the actions plot, since we need to allign the set actions with the set of prices
+        self.initializer_counter = True
+        #for rendering the actions plot, we need to allign the set of actions with the set of prices, so we need to pad the first actions as holding,
+        self.padding = self.sliding_window #number of initial steps to pad, since in the first sliding_window-th prices we don't take any action
+
+
+    """
+    NOTICE:
+    Only for the first call of the reset method of the instatiation of the current TradingEnv class, 
+    the current_step is set to the sliding_window, so we start at the very first price of out time series
+    of price variations.
+    From the second call on (of the reset method), we start randomly based on a Beta distribution.
+    This is mainly done for the rendering of the actions plot, and the testing with just one shot of episode over the interested time.
+    """
     #initializes the environment for a new episode, resetting all the variables to their initial state
     def reset(self, seed=None, options=None):
         super().reset(seed=seed) #we call the reset of the base class gym.env, by doing so we can even insert the chosen seed.
         #Initialize first wallet state, => we do not belong any share and we have all the initial capital in cash
         self.cash = self.initial_cash
         self.shares = self.initial_share
-        # We start from the step = sliding_window
-        # (The first observed state uses the first 'sliding_window' values of pct_change, (so the last one, i.e.: the sliding_window-th)!), 
-        self.current_step = self.sliding_window
+        #if it is the first time we instatiate the environmet, we set the current step to the sliding window, 
+        # #otherwise we randomize it as explained below
+        if self.initializer_counter == True:
+            self.current_step = self.sliding_window
+        else: 
+            #define the minimum and maximum range of our domain, 
+            #where we can pick up the initial state
+            min_step = self.sliding_window #minimum, otherwise we do not have enough history of observations
+            max_step = self.max_step - 2 #maximum-2, otherwise we do not have enough future data to calculate the reward (we need at least one more price after the current step)
+            #it is fundamental to randomize the first initial state of the environment when we reset it, for generalization purposes!
+            #Beta distribution paramters, to bias the initial state towards the earlier part of the data (more recent data is more relevant for trading), we can adjust these parameters to change the bias
+            alpha, beta = 1.2, 5.0 #SEE ONLINE DOCUMENTATION FOR THE BETA DISTRIBUTION TO UNDERSTAND THE EFFECT OF THESE PARAMETERS: https://en.wikipedia.org/wiki/Beta_distribution
+            u = np.random.beta(alpha, beta) #u in [0,1] with a bias towards zero.
+            # (The first observed state uses the first values of pct_change, (so the last one, i.e.: the sliding_window-th)!), 
+            self.current_step = int(min_step + u * (max_step - min_step)) #randomly select a step within the range [min_step, max_step], using a Beta distribution to bias towards the earlier part of the data
+        self.padding = self.current_step #update the padding, on the basis of the case
         # Value of initial wallet, to be used as reference for the reward in the first step
         self.prev_portfolio_value = self.cash
         #first observation (state) of the environment, which is the array of percentage changes for the first 'sliding_window' prices
         obs = self._get_obs()
+        self.initializer_counter = False #we have initialized the environment at least once, so we can render it if we want
         return obs, {} #the first return value is the initial observation, the second is an empty dictionary for additional info (not used here)
 
     #this is a helper function to get the current observation (state) of the environment, which is the array of percentage changes for the last 'sliding_window' prices
@@ -169,7 +197,7 @@ class TradingEnv(gym.Env): #inheritance from the Gym parent class
     #for showing the actions taken in relation with the data
     def show_data_with_actions(self, deeds):
         #initial padding, since in the first sliding_window-th prices we don't take any action
-        padding = [1 for _ in range(self.sliding_window)] #we pad them as holding
+        padding = [1 for _ in range(self.padding)] #we pad them as holding
         #padded actions
         z = padding + deeds
         #dimensions
