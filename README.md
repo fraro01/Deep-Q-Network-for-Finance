@@ -37,10 +37,25 @@ This aligns the RL objective with the trading objective: **maximize final portfo
 
 ---
 
+### Environment assumptions / constraints
+- Each action trades **at most 1 share** (Buy/Sell) per step.
+- **No transaction costs / slippage** by default.
+- The environment is **exogenous**: the agent’s actions do not affect future prices.
+- Episodes end when the dataset ends (or earlier if the wallet value becomes non-positive).
+
+---
+
+### Why DQN
+I adopt **Deep Q-Network (DQN)** because the state space is a compact numerical vector (sliding window) of percentage price variations, hence it is represented in a continuous domain.  
+To improve stability with function approximation, the implementation includes **experience replay**, a **target network**, and **epsilon-greedy exploration**.
+
+---
+
 ## Repository Structure
 
 - `project.ipynb`  
-  Main notebook: methodology, experiments, training loop, results and plots.
+  Main notebook: methodology, experiments, training loop, results and plots.   
+  The notebook contains all the motivations and mathematical reasonings behind crucial choices made throught the report.
 
 - `tradingenv.py`  
   Custom Gymnasium environment implementation (`TradingEnv`).
@@ -90,8 +105,28 @@ Inside the notebook you can configure:
 
 ---
 
+## Experimental setup & evaluation
+Training and evaluation are performed using a **time-based split** (train on an earlier period, test out-of-sample on a later period).  
+Performance is assessed by comparing the DQN agent against the simple baseline of a **random policy.**
+
+The main metric used in the notebook include **final portfolio value** (and the corresponding cumulative PnL).\
+Plots of actions over price are provided for qualitative inspection.
+
+---
+
 Behaviour Preview
-<p align="center"> <img src="plot.JPG" width="66%" alt="Rendering of the taken actions"> <br> <em>Example of price series with the agent’s Buy/Sell actions</em> </p>
+
+<p align="center"> 
+   <img src="plot.JPG" width="66%" alt="Rendering of the taken actions"> 
+   <br> 
+   <em>Price series with the agent’s actions</em> 
+</p>
+
+---
+
+## Results & discussion (summary)
+Results are discussed in detail inside `project.ipynb`, including stability/overfitting considerations and sensitivity to the selected market period (regime).  
+In general, performance can vary significantly across different market phases; therefore, **out-of-sample testing** and baseline comparisons are essential.
 
 ---
 
@@ -103,7 +138,8 @@ This project is an educational implementation and intentionally simplifies sever
 
 * The market dynamics are exogenous: the agent’s actions do not influence future prices.
 
-* Generalization is evaluated via out-of-sample testing (recommended), since in-sample performance can be misleading.
+* Generalization is evaluated via out-of-sample testing (recommended), since in-sample performance can be misleading.  
+Note that is fundamental to use as testing samples, time series *financially similar* to training time series.
 
 If you want to extend the project, good next steps are:
 
@@ -118,11 +154,11 @@ If you want to extend the project, good next steps are:
 ---
 
 ## References / Credits
-* Professor Berta’s RL material and examples:
+* Professor Berta’s RL material and examples:   
    https://github.com/riccardoberta/reinforcement-learning
 
-* q-trader (inspiration for trading-RL framing):
+* q-trader (inspiration for trading-RL framing):   
    https://github.com/edwardhdlu/q-trader
 
-* Gymnasium (Farama Foundation):
+* Gymnasium (Farama Foundation, for the creation of the environment):   
    https://gymnasium.farama.org/
