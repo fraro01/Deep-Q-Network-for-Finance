@@ -2,7 +2,7 @@
 
 This repository contains my **Applied Reinforcement Learning** exam project: a **Deep Q-Network (DQN)** agent trained to perform **short-term trading** on historical market data.
 
-The core idea is the creation of a **Gymnasium-inherited environment**, then train a **value-based RL agent** (DQN) to learn a policy over three discrete actions: **Buy, Hold, Sell**.
+The core idea is the creation of a **Gymnasium-inherited environment**, then train a **value-based RL agent** *(DQN)* to learn a policy over three discrete actions: **Buy, Hold, Sell**.
 
 <p align="center">
   <img src="trading_bot.JPG" width="50%" alt="trading bot">
@@ -21,7 +21,7 @@ The core idea is the creation of a **Gymnasium-inherited environment**, then tra
   - replay memory buffer
   - target network updates
   - epsilon-greedy exploration
-- Produces a simple rendering plot with Matplotlib showing price history and the agent’s actions.
+- Produces a simple rendering plot with Matplotlib showing price history and the agent’s actions taken per step.
 
 ### Action space
 - `0`: Buy (1 share if affordable)
@@ -29,8 +29,8 @@ The core idea is the creation of a **Gymnasium-inherited environment**, then tra
 - `2`: Sell (1 share if held)
 
 ### Reward
-The reward is a **monetary reward**, computed as the variation of portfolio value between consecutive steps:
-- Portfolio value = `cash + shares * price`
+The reward signal is a **monetary reward**, computed as the variation of portfolio value between consecutive steps:
+- Portfolio value = `cash + shares * current_price`
 - Reward = `new_portfolio_value - old_portfolio_value`
 
 This aligns the RL objective with the trading objective: **maximize final portfolio value**.
@@ -42,6 +42,7 @@ This aligns the RL objective with the trading objective: **maximize final portfo
 - **No transaction costs / slippage** by default.
 - The environment is **exogenous**: the agent’s actions do not affect future prices.
 - Episodes end when the dataset ends (or earlier if the wallet value becomes non-positive).
+- The state space only takes into account percentage price variations.
 
 ---
 
@@ -94,7 +95,7 @@ Open the notebook and execute the cells in order:
    jupyter notebook project.ipynb
    ```
 
-Inside the notebook you can configure:
+Inside the notebook you can configure the fundamental hyperparameters of the class environment:
 
 * ticker symbol (e.g., SPY, AAPL, QQQ)
 * date range
@@ -102,6 +103,8 @@ Inside the notebook you can configure:
 * sliding window length
 * initial wallet (cash and shares)
 * DQN hyperparameters (gamma, learning rate, batch size, epsilon schedule, ecc...)
+
+Note that throught the Notebook you will find all others fundamental hyperparameters preceded with a `#HYP!` comment.
 
 ---
 
