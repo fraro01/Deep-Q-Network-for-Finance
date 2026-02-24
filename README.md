@@ -118,12 +118,12 @@ The main metric used in the notebook include **final portfolio value** (and the 
 Plots of actions over price are provided for qualitative inspection.
 
 ---
-*Senbsitivity*
+*Performance compared to random policy*
 
 <p align="center"> 
-   <img src="sensitivity.png" width="66%" alt="Rendering of the taken actions"> 
+   <img src="sensitivity.png" width="66%" alt="Agent's performance compared to random policy"> 
    <br> 
-   <em>Price series with the agent’s actions</em> 
+   <em>Agent's performance over the episodes</em> 
 </p>
 
 *Behaviour Preview*
