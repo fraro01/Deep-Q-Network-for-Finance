@@ -99,7 +99,7 @@ class TradingEnv(gym.Env): #inheritance from the Gym parent class
             max_step = self.max_step - 2 #maximum-2, otherwise we do not have enough future data to calculate the reward (we need at least one more price after the current step)
             #it is fundamental to randomize the first initial state of the environment when we reset it, for generalization purposes!
             #Beta distribution paramters, to bias the initial state towards the earlier part of the data (more recent data is more relevant for trading), we can adjust these parameters to change the bias
-            alpha, beta = 1.2, 5.0 #SEE ONLINE DOCUMENTATION FOR THE BETA DISTRIBUTION TO UNDERSTAND THE EFFECT OF THESE PARAMETERS: https://en.wikipedia.org/wiki/Beta_distribution
+            alpha, beta = 1.2, 7.0 #SEE ONLINE DOCUMENTATION FOR THE BETA DISTRIBUTION TO UNDERSTAND THE EFFECT OF THESE PARAMETERS: https://en.wikipedia.org/wiki/Beta_distribution
             u = np.random.beta(alpha, beta) #u in [0,1] with a bias towards zero.
             # (The first observed state uses the first values of pct_change, (so the last one, i.e.: the sliding_window-th)!), 
             self.current_step = int(min_step + u * (max_step - min_step)) #randomly select a step within the range [min_step, max_step], using a Beta distribution to bias towards the earlier part of the data

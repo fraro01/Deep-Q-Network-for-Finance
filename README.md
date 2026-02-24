@@ -2,7 +2,9 @@
 
 This repository contains my **Applied Reinforcement Learning** exam project: a **Deep Q-Network (DQN)** agent trained to perform **short-term trading** on historical market data.
 
-The core idea is the creation of a **Gymnasium-inherited environment**, then train a **value-based RL agent** *(DQN)* to learn a policy over three discrete actions: **Buy, Hold, Sell**.
+The core idea is the creation of a **Gymnasium-inherited environment**, then train a **value-based RL agent** ***(DQN)*** to learn a policy over three discrete actions: **Buy, Hold, Sell**.
+
+Note that this is a very **vanilla-base** implementation for learning purposes.
 
 <p align="center">
   <img src="trading_bot.JPG" width="50%" alt="trading bot">
@@ -42,7 +44,7 @@ This aligns the RL objective with the trading objective: **maximize final portfo
 - **No transaction costs / slippage** by default.
 - The environment is **exogenous**: the agent’s actions do not affect future prices.
 - Episodes end when the dataset ends (or earlier if the wallet value becomes non-positive).
-- The state space only takes into account percentage price variations.
+- The state space only takes into account percentage price variations. This is a very strong limitations, as shown by the section SOTA of the notebook.
 
 ---
 
@@ -64,7 +66,7 @@ To improve stability with function approximation, the implementation includes **
 - `requirements.txt`  
   Python dependencies.
 
-- `trading_bot.JPG`, `plot.JPG`  
+- `trading_bot.JPG`, `sensitivity.png`, `actions_taken.png`  
   Images used in the notebook and the README.
 
 ---
@@ -97,9 +99,9 @@ Open the notebook and execute the cells in order:
 
 Inside the notebook you can configure the fundamental hyperparameters of the class environment:
 
-* ticker symbol (e.g., SPY, AAPL, QQQ)
+* ticker symbol (e.g., SPY, AAPL, QQQ, ...)
 * date range
-* data granularity (daily)
+* data granularity (e.g.: hourly, daily, monthly, ...)
 * sliding window length
 * initial wallet (cash and shares)
 * DQN hyperparameters (gamma, learning rate, batch size, epsilon schedule, ecc...)
@@ -116,11 +118,18 @@ The main metric used in the notebook include **final portfolio value** (and the 
 Plots of actions over price are provided for qualitative inspection.
 
 ---
-
-Behaviour Preview
+*Senbsitivity*
 
 <p align="center"> 
-   <img src="plot.JPG" width="66%" alt="Rendering of the taken actions"> 
+   <img src="sensitivity.png" width="66%" alt="Rendering of the taken actions"> 
+   <br> 
+   <em>Price series with the agent’s actions</em> 
+</p>
+
+*Behaviour Preview*
+
+<p align="center"> 
+   <img src="actions_taken.png" width="66%" alt="Rendering of the taken actions"> 
    <br> 
    <em>Price series with the agent’s actions</em> 
 </p>
@@ -130,6 +139,9 @@ Behaviour Preview
 ## Results & discussion (summary)
 Results are discussed in detail inside `project.ipynb`, including stability/overfitting considerations and sensitivity to the selected market period (regime).  
 In general, performance can vary significantly across different market phases; therefore, **out-of-sample testing** and baseline comparisons are essential.
+
+***As already mentioned, this vanilla-base implementation is strongly limited especially on the state representation, since academic studies provide evidence that inserting more relevant features in terms of financial metrics, can strongly improve the generalization capabilities of the RL agent.\
+In our learning set up, the agent shows evidence of learning capabilities in terms of recognizing bullish/bearish patterns in training, and then acting consequently in testing (more prone to buy/sell).***
 
 ---
 
@@ -145,6 +157,8 @@ This project is an educational implementation and intentionally simplifies sever
 Note that is fundamental to use as testing samples, time series *financially similar* to training time series.
 
 If you want to extend the project, good next steps are:
+
+* **Insert more financial features for state representation.**
 
 * transaction costs and spread modeling
 

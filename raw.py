@@ -5,6 +5,11 @@ Created on Fri Feb 13 08:18:44 2026
 @author: Francesco
 """
 
+"""
+raw script for testing purposes, to be used as a playground for testing the environment and the plotting function, 
+before integrating them into the main project notebook.
+"""
+
 from tradingenv import TradingEnv
 import numpy as np
 import matplotlib.pyplot as plt
